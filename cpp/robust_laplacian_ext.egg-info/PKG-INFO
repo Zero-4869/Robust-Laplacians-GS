@@ -1,0 +1,7 @@
+Metadata-Version: 2.1
+Name: robust_laplacian_ext
+Version: 0.1.0
+Summary: Robust Laplace matrices for 3d Gaussians
+License: MIT
+Requires-Dist: numpy
+Requires-Dist: scipy
