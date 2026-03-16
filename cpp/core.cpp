@@ -1481,7 +1481,7 @@ PYBIND11_MODULE(robust_laplacian_bindings_ext, m) {
   m.def("naiveGaussianHeatDistancett", &naiveGaussianHeatDistancett, "tt",
       py::arg("plyPath"), py::arg("sourceIndex"), py::arg("L"), py::arg("M"));
   m.def("neighborhoodMahalanobis", &neighborhoodMahalanobis, "examine the neighborhood",
-      py::arg("vMat"), py::arg("nMat"), py::arg("RT_inverse"), py::arg("mollifyFactor"), py::arg("nNeigh"));
+      py::arg("vMat"), py::arg("nMat"), py::arg("RT_inverse"), py::arg("mollifyFactor"), py::arg("nNeigh"), py::arg("N"));
   m.def("neighborhoodMahalanobis_bilateral", &neighborhoodMahalanobis_bilateral, "examine the neighborhood",
       py::arg("vMat"), py::arg("nMat"), py::arg("RT_inverse"), py::arg("mollifyFactor"), py::arg("nNeigh"), py::arg("N"));
   m.def("neighborhoodKNN", &neighborhoodKNN, "examine the neighborhood KNN",
