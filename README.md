@@ -13,3 +13,5 @@ Used for the Paper "Laplace-Beltrami Operator for Gaussian Splatting". If you ca
   organization={IEEE}
 }
 ```
+## Acknowledgement
+This project is built upon [Robust Laplacians](https://github.com/nmwsharp/robust-laplacians-py). We thank the authors for their great work and repos.
