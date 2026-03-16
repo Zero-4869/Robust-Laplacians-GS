@@ -1342,16 +1342,7 @@ std::tuple<DenseMatrix<size_t>, DenseMatrix<double>> neighborhoodMahalanobis(
                                           const DenseMatrix<double>& vMat, 
                                           const DenseMatrix<double>& nMat, 
                                           const DenseMatrix<double>& RT_inverse, 
-                                          double mollifyFactor, size_t nNeigh){
-  // Read in a point cloud
-  // std::unique_ptr<PointCloud> cloud;
-  // std::unique_ptr<PointPositionGeometryExt> geom;
-  // std::tie(cloud, geom) = readPointCloudExt(plyPath);
-
-  // // compute the Laplacian
-  // // auto laplacian = buildGaussianLaplacian_mahalanobis(vMat, nMat, RT_inverse, mollifyFactor, nNeigh);
-  // auto laplacian = buildGaussianLaplacian(vMat, nMat, RT_inverse, mollifyFactor, nNeigh);
-  // SparseMatrix<double> L = std::get<0>(laplacian); SparseMatrix<double> M = std::get<1>(laplacian);
+                                          double mollifyFactor, size_t nNeigh, size_t N){
   // compute the neighbors
   SimplePolygonMesh cloudMesh;
 
@@ -1359,26 +1350,17 @@ std::tuple<DenseMatrix<size_t>, DenseMatrix<double>> neighborhoodMahalanobis(
   for (size_t iP = 0; iP < cloudMesh.vertexCoordinates.size(); iP++) {
     cloudMesh.vertexCoordinates[iP] = Vector3{vMat(iP, 0), vMat(iP, 1), vMat(iP, 2)};
   }
-  // Generate normals
-  // std::vector<Vector3> normals(nMat.rows());
-  // for(size_t i=0;i<nMat.rows();i++){
-  //   normals[i] = Vector3{nMat.coeff(i, 0), nMat.coeff(i, 1), nMat.coeff(i, 2)};
-  // }
-  // Neighbors_t neigh_raw = generate_knn_adapted(cloudMesh.vertexCoordinates, nNeigh, RT_inverse, 5);
-  Neighbors_t neigh_raw = generate_knn_adapted(cloudMesh.vertexCoordinates, nNeigh, RT_inverse);
-  // Neighbors_t neigh_raw = generate_knn_mahalanobis_euclidean(cloudMesh.vertexCoordinates, nNeigh, RT_inverse);
+  Neighbors_t neigh_raw = generate_knn(cloudMesh.vertexCoordinates, nNeigh);
+  Neighbors_t _neigh = filter_mahalanobis(cloudMesh.vertexCoordinates, neigh_raw, N, RT_inverse);
   
-  DenseMatrix<size_t> neigh(neigh_raw.size(), nNeigh);
-  for(size_t iN=0; iN<neigh_raw.size(); iN++){
-    for(size_t iPt=0; iPt<neigh_raw[iN].size(); iPt++){
-      neigh(iN, iPt) = neigh_raw[iN][iPt];
+  DenseMatrix<size_t> neigh(_neigh.size(), N);
+  for(size_t iN=0; iN<_neigh.size(); iN++){
+    for(size_t iPt=0; iPt<_neigh[iN].size(); iPt++){
+      neigh(iN, iPt) = _neigh[iN][iPt];
     }
   }
-  // std::vector<Vector3> normals_(nMat.rows());
-  // for(size_t i=0;i<nMat.rows();i++){
-  //   normals_[i] = Vector3{nMat.coeff(i, 0), nMat.coeff(i, 1), nMat.coeff(i, 2)};
-  // }
-  std::vector<Vector3> normals_ = generate_normals(cloudMesh.vertexCoordinates, neigh_raw);
+  
+  std::vector<Vector3> normals_ = generate_normals(cloudMesh.vertexCoordinates, _neigh);
   DenseMatrix<double> normals(normals_.size(), 3);
   for(size_t iN=0; iN<normals_.size(); iN++){
     for(size_t iPt=0; iPt<3; iPt++){
